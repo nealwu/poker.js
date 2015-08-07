@@ -25,8 +25,8 @@ function Deck() {
 }
 
 Deck.prototype.shuffle = function() {
-    for (var i in this.cards) {
-        var j = Math.floor(Math.random() * (this.cards.length - i));
+    for (var i = 0; i < this.cards.length; i++) {
+        var j = i + Math.floor(Math.random() * (this.cards.length - i));
         var swap = this.cards[j];
         this.cards[j] = this.cards[i];
         this.cards[i] = swap;
@@ -39,6 +39,17 @@ Deck.prototype.drawCard = function() {
     }
 
     return this.cards[this.topCard++];
+}
+
+Deck.prototype.findAndDrawCard = function(card) {
+    for (var i = this.topCard; i < this.cards.length; i++) {
+        if (this.cards[i] === card) {
+            this.cards[i] = this.cards[this.topCard];
+            this.cards[this.topCard] = card;
+        }
+    }
+
+    return this.drawCard();
 }
 
 Deck.prototype.toString = function() {
@@ -394,3 +405,40 @@ for (var i = 0; i < hands.length; i++) {
     output += ' ' + hands[i].toString();
     console.log(output);
 }
+
+var hand1 = deck.findAndDrawCard('4c') + deck.findAndDrawCard('4s');
+var hand2 = deck.findAndDrawCard('5h') + deck.findAndDrawCard('7h');
+var flop = deck.findAndDrawCard('4h') + deck.findAndDrawCard('6h') + deck.findAndDrawCard('As');
+
+var cards = [];
+var draw = deck.drawCard();
+
+while (draw !== null) {
+    cards.push(draw);
+    draw = deck.drawCard();
+}
+
+var wins1 = 0;
+var wins2 = 0;
+var ties = 0;
+
+for (var i = 0; i < cards.length; i++) {
+    for (var j = i + 1; j < cards.length; j++) {
+        var fullHand1 = FiveCardHand.computeFromCards(hand1 + flop + cards[i] + cards[j]);
+        var fullHand2 = FiveCardHand.computeFromCards(hand2 + flop + cards[i] + cards[j]);
+        var result = fullHand1.compare(fullHand2);
+
+        if (result === -1) {
+            wins2++;
+        } else if (result === 0) {
+            ties++;
+        } else {
+            wins1++;
+        }
+    }
+}
+
+var equity1 = 100 * (wins1 + 0.5 * ties) / (wins1 + wins2 + ties);
+var equity2 = 100 * (wins2 + 0.5 * ties) / (wins1 + wins2 + ties);
+console.log(hand1 + ' vs. ' + hand2 + ' on ' + flop + ': ' + Number(equity1).toFixed(2) + '% vs. ' + Number(equity2).toFixed(2) + '%');
+console.log(wins1 + ' wins ' + ties + ' ties ' + wins2 + ' wins');
