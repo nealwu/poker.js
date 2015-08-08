@@ -52,6 +52,10 @@ Deck.prototype.findAndDrawCard = function(card) {
     return this.drawCard();
 }
 
+Deck.prototype.replaceCard = function() {
+    this.topCard--;
+}
+
 Deck.prototype.toString = function() {
     var output = '';
 
@@ -119,7 +123,7 @@ FiveCardHand.consecutiveCards = function(cards) {
         var valid = ranks[i] === ranks[i + 1] + 1;
 
         // Special case for an ace
-        if (ranks[i] === 2 && ranks[i + 1] === RANKS.length - 1) {
+        if (ranks[i] === 0 && ranks[i + 1] === RANKS.length - 1) {
             valid = true;
         }
 
@@ -179,6 +183,11 @@ FiveCardHand.computeFromCards = function(cardsString) {
             }
         }
 
+        // If we have an ace, append it to the end as well to check for the wheel straight flush
+        if (suitCards[0][0] === 'A') {
+            suitCards.push(cards[0]);
+        }
+
         for (var i = 0; i + 5 <= suitCards.length; i++) {
             var cardsToCheck = suitCards.slice(i, i + 5);
 
@@ -191,6 +200,14 @@ FiveCardHand.computeFromCards = function(cardsString) {
     }
 
     // Check for a straight
+    var aceAppended = false;
+
+    if (cards[0][0] === 'A') {
+        // If we have an ace, append it to the end as well to check for the wheel straight
+        cards.push(cards[0]);
+        aceAppended = true;
+    }
+
     for (var i = 0; i + 5 <= cards.length; i++) {
         var cardsToCheck = [];
 
@@ -203,6 +220,10 @@ FiveCardHand.computeFromCards = function(cardsString) {
         if (cardsToCheck.length === 5 && this.consecutiveCards(cardsToCheck)) {
             return new FiveCardHand(STRAIGHT, cardsToCheck.join(''));
         }
+    }
+
+    if (aceAppended) {
+        cards.pop();
     }
 
     // Check for quads
@@ -339,9 +360,10 @@ var twoPair3 = FiveCardHand.computeFromCards('3h8d3s2c2dAcAd');
 var twoPair4 = FiveCardHand.computeFromCards('3h9d3s2c2dAcAd');
 var trips1 = FiveCardHand.computeFromCards('2d6h6d5s9h6c4s');
 var trips2 = FiveCardHand.computeFromCards('2d6h6d5s9h6c7s');
-var straight1 = FiveCardHand.computeFromCards('2cAc3s4c5s6s9s');
-var straight2 = FiveCardHand.computeFromCards('2d6h6d5s3h6c4s');
-var straight3 = FiveCardHand.computeFromCards('7d6h6d5s3h6c4s');
+var straight1 = FiveCardHand.computeFromCards('Ac5d2s3d4d4s4c');
+var straight2 = FiveCardHand.computeFromCards('2cAc3s4c5s6s9s');
+var straight3 = FiveCardHand.computeFromCards('2d6h6d5s3h6c4s');
+var straight4 = FiveCardHand.computeFromCards('7d6h6d5s3h6c4s');
 var flush1 = FiveCardHand.computeFromCards('KcQc3s5sJc9c8c');
 var flush2 = FiveCardHand.computeFromCards('4cAc3s5s6c9c2c');
 var flush3 = FiveCardHand.computeFromCards('4cAc3s5s6c9c3c');
@@ -351,7 +373,7 @@ var fullHouse3 = FiveCardHand.computeFromCards('2d7h7d7s2h4s6c');
 var quads1 = FiveCardHand.computeFromCards('3h8d3s3c3d2c2d');
 var quads2 = FiveCardHand.computeFromCards('3h8d3s3c3dAcAd');
 var quads3 = FiveCardHand.computeFromCards('AhAsAdAcKhKc2d');
-var straightFlush1 = FiveCardHand.computeFromCards('6cAc3c4c5c2c9c');
+var straightFlush1 = FiveCardHand.computeFromCards('8cAc3c4c5c2c9c');
 var straightFlush2 = FiveCardHand.computeFromCards('6c7c3c4c5c2c8c');
 var straightFlush3 = FiveCardHand.computeFromCards('AcQcTcJcKsKdKc');
 
@@ -370,6 +392,7 @@ trips2.print();
 straight1.print();
 straight2.print();
 straight3.print();
+straight4.print();
 flush1.print();
 flush2.print();
 flush3.print();
@@ -384,7 +407,7 @@ straightFlush2.print();
 straightFlush3.print();
 
 var hands = [highCard1, highCard2, highCard3, onePair1, onePair2, onePair3, twoPair1, twoPair2, twoPair3, twoPair4,
-             trips1, trips2, straight1, straight2, straight3, flush1, flush2, flush3, fullHouse1, fullHouse2,
+             trips1, trips2, straight1, straight2, straight3, straight4, flush1, flush2, flush3, fullHouse1, fullHouse2,
              fullHouse3, quads1, quads2, quads3, straightFlush1, straightFlush2, straightFlush3];
 
 for (var i = 0; i < hands.length; i++) {
@@ -406,9 +429,62 @@ for (var i = 0; i < hands.length; i++) {
     console.log(output);
 }
 
-var hand1 = deck.findAndDrawCard('4c') + deck.findAndDrawCard('4s');
-var hand2 = deck.findAndDrawCard('5h') + deck.findAndDrawCard('7h');
-var flop = deck.findAndDrawCard('4h') + deck.findAndDrawCard('6h') + deck.findAndDrawCard('As');
+function simulateBoard(hand1, hand2, board, deck) {
+    var result = {wins1: 0, wins2: 0, ties: 0};
+
+    if (board.length === 10) {
+        var fullHand1 = FiveCardHand.computeFromCards(hand1 + board);
+        var fullHand2 = FiveCardHand.computeFromCards(hand2 + board);
+        var winner = fullHand1.compare(fullHand2);
+
+        if (winner === -1) {
+            result.wins2++;
+        } else if (winner === 0) {
+            result.ties++;
+        } else {
+            result.wins1++;
+        }
+
+        return result;
+    }
+
+    var draws = 0;
+    var card = deck.drawCard();
+
+    while (card !== null) {
+        var nextResult = simulateBoard(hand1, hand2, board + card, deck);
+        result.wins1 += nextResult.wins1;
+        result.wins2 += nextResult.wins2;
+        result.ties += nextResult.ties;
+        draws++;
+        card = deck.drawCard();
+    }
+
+    while (draws > 0) {
+        deck.replaceCard();
+        draws--;
+    }
+
+    return result;
+}
+
+function computeEquity(hand1, hand2, board) {
+    var deck = new Deck();
+    var combined = hand1 + hand2 + board;
+
+    for (var i = 0; i < combined.length; i += 2) {
+        deck.findAndDrawCard(combined.substring(i, i + 2));
+    }
+
+    var result = simulateBoard(hand1, hand2, board, deck);
+    result.equity1 = 100 * (result.wins1 + 0.5 * result.ties) / (result.wins1 + result.wins2 + result.ties);
+    result.equity2 = 100 * (result.wins2 + 0.5 * result.ties) / (result.wins1 + result.wins2 + result.ties);
+    return result;
+}
+
+var hand1 = deck.findAndDrawCard('Ah') + deck.findAndDrawCard('Jh');
+var hand2 = deck.findAndDrawCard('Qs') + deck.findAndDrawCard('Qh');
+var flop = deck.findAndDrawCard('8h') + deck.findAndDrawCard('Qd') + deck.findAndDrawCard('Th');
 
 var cards = [];
 var draw = deck.drawCard();
@@ -442,3 +518,5 @@ var equity1 = 100 * (wins1 + 0.5 * ties) / (wins1 + wins2 + ties);
 var equity2 = 100 * (wins2 + 0.5 * ties) / (wins1 + wins2 + ties);
 console.log(hand1 + ' vs. ' + hand2 + ' on ' + flop + ': ' + Number(equity1).toFixed(2) + '% vs. ' + Number(equity2).toFixed(2) + '%');
 console.log(wins1 + ' wins ' + ties + ' ties ' + wins2 + ' wins');
+
+console.log(computeEquity('AsAc', 'KsKh', '2h3h9d'));
