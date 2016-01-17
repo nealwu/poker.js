@@ -325,6 +325,7 @@ FiveCardHand.computeFromCards = function(cardsString) {
     return new FiveCardHand(HIGH_CARD, cards.slice(0, 5).join(''));
 }
 
+/*
 var deck = new Deck();
 console.log('Unshuffled deck:');
 deck.print();
@@ -428,6 +429,7 @@ for (var i = 0; i < hands.length; i++) {
     output += ' ' + hands[i].toString();
     console.log(output);
 }
+*/
 
 function simulateBoard(hand1, hand2, board, deck) {
     var result = {wins1: 0, wins2: 0, ties: 0};
@@ -436,6 +438,8 @@ function simulateBoard(hand1, hand2, board, deck) {
         var fullHand1 = FiveCardHand.computeFromCards(hand1 + board);
         var fullHand2 = FiveCardHand.computeFromCards(hand2 + board);
         var winner = fullHand1.compare(fullHand2);
+
+        // console.log(board + ': ' + winner);
 
         if (winner === -1) {
             result.wins2++;
@@ -482,9 +486,10 @@ function computeEquity(hand1, hand2, board) {
     return result;
 }
 
-var hand1 = deck.findAndDrawCard('Ah') + deck.findAndDrawCard('Jh');
-var hand2 = deck.findAndDrawCard('Qs') + deck.findAndDrawCard('Qh');
-var flop = deck.findAndDrawCard('8h') + deck.findAndDrawCard('Qd') + deck.findAndDrawCard('Th');
+/*
+var hand1 = deck.findAndDrawCard('2s') + deck.findAndDrawCard('3h');
+var hand2 = deck.findAndDrawCard('6s') + deck.findAndDrawCard('7s');
+var flop = deck.findAndDrawCard('As') + deck.findAndDrawCard('4h') + deck.findAndDrawCard('5s');
 
 var cards = [];
 var draw = deck.drawCard();
@@ -519,4 +524,50 @@ var equity2 = 100 * (wins2 + 0.5 * ties) / (wins1 + wins2 + ties);
 console.log(hand1 + ' vs. ' + hand2 + ' on ' + flop + ': ' + Number(equity1).toFixed(2) + '% vs. ' + Number(equity2).toFixed(2) + '%');
 console.log(wins1 + ' wins ' + ties + ' ties ' + wins2 + ' wins');
 
-console.log(computeEquity('AsAc', 'KsKh', '2h3h9d'));
+console.log(computeEquity('2s3h', '6s7s', 'As4h5s'));
+*/
+
+var results = {};
+var freq = {};
+var counter = 0;
+
+while (true) {
+    if (counter % 50000 === 0) {
+        console.log(freq);
+    }
+
+    counter++;
+    var deck = new Deck();
+    deck.shuffle();
+
+    var hand1 = deck.drawCard() + deck.drawCard();
+    var hand2 = deck.drawCard() + deck.drawCard();
+    var flop = deck.drawCard() + deck.drawCard() + deck.drawCard();
+
+    var result = computeEquity(hand1, hand2, flop);
+    var lowerEquity = 2 * result.wins1 + result.ties;
+
+    if (lowerEquity > 990) {
+        lowerEquity = 2 * 990 - lowerEquity;
+        var temp = hand1;
+        hand1 = hand2;
+        hand2 = temp;
+    }
+
+    if (!(lowerEquity in freq)) {
+        freq[lowerEquity] = 0;
+    }
+
+    freq[lowerEquity]++;
+
+    if (!(lowerEquity in results)) {
+        results[lowerEquity] = {hand1: hand1, hand2: hand2, flop: flop};
+        console.log(results);
+        console.log(Object.keys(results).length + ' ' + counter);
+    }
+
+    if (result.wins1 === result.wins2 && FiveCardHand.computeFromCards(hand1 + flop).compare(FiveCardHand.computeFromCards(hand2 + flop)) !== 0) {
+        console.log('EVEN: ' + hand1 + ' ' + hand2 + ' on ' + flop);
+        results[lowerEquity] = {hand1: hand1, hand2: hand2, flop: flop};
+    }
+}

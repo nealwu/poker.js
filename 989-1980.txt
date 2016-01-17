@@ -1,0 +1,18 @@
+Hand 1: Qh3h
+Hand 2: Qc6c
+Flop: KhKs8s
+
+Equity: 989/1980 (closest as possible without being exactly 50-50)
+
+Wins:
+45 flushes
+3 * 34 of 3, not 6 not 8 not 3 not Q (34 = 44 - 3 - 3 - 2 - 2)
+3 of 33
+
+Losses:
+3 * 34 of 6, not 6 not 3 not 8 not Q
+-8 from above for 6h, another heart
+3 of 66
+9 of 63
+48 of 24, 25, or 45
+-3 from above for 2h4h, 2h5h, 4h5h
