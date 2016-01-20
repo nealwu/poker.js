@@ -1,0 +1,18 @@
+Hacking Poker @ Arctic.js
+
+Intro to poker rules (2 min):
+    - List of poker hands (1 min)
+    - Betting structure (1 min)
+
+Potential topics:
+Starting hands
+Position
+Semibluffing
+Fold equity (aggression)
+Pot odds
+Implied odds
+Continuation betting
+Floating
+3-betting
+Squeezing
+Range balancing
