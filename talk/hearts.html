@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <title>Hearts Tracker</title>
+    <style>
+      body {
+        font-family: Helvetica, Arial, Sans-Serif;
+      }
+
+      img {
+        margin: 4px;
+        width: 80%;
+        height: auto;
+      }
+
+      .passed {
+        border: solid 2px blue;
+      }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script>
+      var lastClickedImage = null;
+
+      $(document).ready(function() {
+        $('.cardImage').click(function() {
+          if (parseFloat($(this).css('opacity')) < 0.5) {
+            $(this).css('opacity', 1);
+          } else {
+            $(this).css('opacity', 0);
+          }
+
+          lastClickedImage = $(this);
+        })
+
+        $(document).keydown(function(event) {
+          if (event.keyCode === 32) {
+            if (lastClickedImage) {
+              lastClickedImage.css('opacity', 1);
+              lastClickedImage.toggleClass('passed');
+            }
+          }
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <h2>Cards that have been played</h2>
+    <h4>Press space to denote cards you have passed</h4>
+    <table>
+      <tr>
+        <td><img class="cardImage" src="imgs/2c.gif"></img></td>
+        <td><img class="cardImage" src="imgs/3c.gif"></img></td>
+        <td><img class="cardImage" src="imgs/4c.gif"></img></td>
+        <td><img class="cardImage" src="imgs/5c.gif"></img></td>
+        <td><img class="cardImage" src="imgs/6c.gif"></img></td>
+        <td><img class="cardImage" src="imgs/7c.gif"></img></td>
+        <td><img class="cardImage" src="imgs/8c.gif"></img></td>
+        <td><img class="cardImage" src="imgs/9c.gif"></img></td>
+        <td><img class="cardImage" src="imgs/tc.gif"></img></td>
+        <td><img class="cardImage" src="imgs/jc.gif"></img></td>
+        <td><img class="cardImage" src="imgs/qc.gif"></img></td>
+        <td><img class="cardImage" src="imgs/kc.gif"></img></td>
+        <td><img class="cardImage" src="imgs/ac.gif"></img></td>
+      </tr>
+      <tr>
+        <td><img class="cardImage" src="imgs/2d.gif"></img></td>
+        <td><img class="cardImage" src="imgs/3d.gif"></img></td>
+        <td><img class="cardImage" src="imgs/4d.gif"></img></td>
+        <td><img class="cardImage" src="imgs/5d.gif"></img></td>
+        <td><img class="cardImage" src="imgs/6d.gif"></img></td>
+        <td><img class="cardImage" src="imgs/7d.gif"></img></td>
+        <td><img class="cardImage" src="imgs/8d.gif"></img></td>
+        <td><img class="cardImage" src="imgs/9d.gif"></img></td>
+        <td><img class="cardImage" src="imgs/td.gif"></img></td>
+        <td><img class="cardImage" src="imgs/jd.gif"></img></td>
+        <td><img class="cardImage" src="imgs/qd.gif"></img></td>
+        <td><img class="cardImage" src="imgs/kd.gif"></img></td>
+        <td><img class="cardImage" src="imgs/ad.gif"></img></td>
+      </tr>
+      <tr>
+        <td><img class="cardImage" src="imgs/2s.gif"></img></td>
+        <td><img class="cardImage" src="imgs/3s.gif"></img></td>
+        <td><img class="cardImage" src="imgs/4s.gif"></img></td>
+        <td><img class="cardImage" src="imgs/5s.gif"></img></td>
+        <td><img class="cardImage" src="imgs/6s.gif"></img></td>
+        <td><img class="cardImage" src="imgs/7s.gif"></img></td>
+        <td><img class="cardImage" src="imgs/8s.gif"></img></td>
+        <td><img class="cardImage" src="imgs/9s.gif"></img></td>
+        <td><img class="cardImage" src="imgs/ts.gif"></img></td>
+        <td><img class="cardImage" src="imgs/js.gif"></img></td>
+        <td><img class="cardImage" src="imgs/qs.gif"></img></td>
+        <td><img class="cardImage" src="imgs/ks.gif"></img></td>
+        <td><img class="cardImage" src="imgs/as.gif"></img></td>
+      </tr>
+      <tr>
+        <td><img class="cardImage" src="imgs/2h.gif"></img></td>
+        <td><img class="cardImage" src="imgs/3h.gif"></img></td>
+        <td><img class="cardImage" src="imgs/4h.gif"></img></td>
+        <td><img class="cardImage" src="imgs/5h.gif"></img></td>
+        <td><img class="cardImage" src="imgs/6h.gif"></img></td>
+        <td><img class="cardImage" src="imgs/7h.gif"></img></td>
+        <td><img class="cardImage" src="imgs/8h.gif"></img></td>
+        <td><img class="cardImage" src="imgs/9h.gif"></img></td>
+        <td><img class="cardImage" src="imgs/th.gif"></img></td>
+        <td><img class="cardImage" src="imgs/jh.gif"></img></td>
+        <td><img class="cardImage" src="imgs/qh.gif"></img></td>
+        <td><img class="cardImage" src="imgs/kh.gif"></img></td>
+        <td><img class="cardImage" src="imgs/ah.gif"></img></td>
+      </tr>
+    </table>
+
+    <h2>Opponent void suits</h2>
+    <table>
+      <tr>
+        <td><p>Left:</p></td>
+        <td><img class="cardImage" src="imgs/ac.gif"></img></td>
+        <td><img class="cardImage" src="imgs/ad.gif"></img></td>
+        <td><img class="cardImage" src="imgs/as.gif"></img></td>
+        <td><img class="cardImage" src="imgs/ah.gif"></img></td>
+        <td><p>Top:</p></td>
+        <td><img class="cardImage" src="imgs/ac.gif"></img></td>
+        <td><img class="cardImage" src="imgs/ad.gif"></img></td>
+        <td><img class="cardImage" src="imgs/as.gif"></img></td>
+        <td><img class="cardImage" src="imgs/ah.gif"></img></td>
+        <td><p>Right:</p></td>
+        <td><img class="cardImage" src="imgs/ac.gif"></img></td>
+        <td><img class="cardImage" src="imgs/ad.gif"></img></td>
+        <td><img class="cardImage" src="imgs/as.gif"></img></td>
+        <td><img class="cardImage" src="imgs/ah.gif"></img></td>
+      </tr>
+    </table>
+
+    <h2>Passed:</h2>
+    <input type="radio" name="passed"> Left
+    <input type="radio" name="passed"> Across
+    <input type="radio" name="passed"> Right
+    <input type="radio" name="passed"> None
+
+    <h2>Notes</h2>
+    <textarea></textarea>
+  </body>
+</html>
